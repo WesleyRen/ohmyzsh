@@ -217,7 +217,11 @@ prompt_hg() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue $CURRENT_FG '%~'
+  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    gn=`git rev-parse --show-toplevel`
+    bn=`basename $gn`
+    prompt_segment blue black $bn
+  fi
 }
 
 # Virtualenv: current working virtualenv
