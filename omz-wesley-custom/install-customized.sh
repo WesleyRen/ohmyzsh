@@ -33,6 +33,17 @@ if [[ -f "wesley-functions.zsh" ]]; then
     cp wesley-functions.zsh "$CUSTOM_DIR/"
 fi
 
+# Install iTerm2 Shell Integration if missing
+if [[ ! -f "$HOME/.iterm2_shell_integration.zsh" ]]; then
+    echo "Installing iTerm2 Shell Integration..."
+
+    curl -fsSL \
+        https://iterm2.com/shell_integration/zsh \
+        -o "$HOME/.iterm2_shell_integration.zsh"
+
+    echo "Installed ~/.iterm2_shell_integration.zsh"
+fi
+
 # Backup .zshrc
 zshrc_backup="$HOME/.zshrc.backup.$timestamp"
 cp "$HOME/.zshrc" "$zshrc_backup"
