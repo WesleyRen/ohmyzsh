@@ -14,6 +14,24 @@
 
 local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
 
+function wesley_ssh_host() {
+    [[ -n "$SSH_CONNECTION" ]] || return
+
+    local host=$(hostname -s)
+
+    case "$host" in
+        mini-m4)
+            echo " [mini]"
+            ;;
+        Wesleys-MacBook-Air)
+            echo " [air]"
+            ;;
+        *)
+            echo " [$host]"
+            ;;
+    esac
+}
+
 function wesley_git_status_symbols() {
   local git_status
   git_status="$(git status --porcelain 2>/dev/null)" || return
@@ -67,7 +85,7 @@ function wesley_git_prompt_info() {
   fi
 }
 
-PROMPT='${ret_status}%{$fg_bold[red]%}➜ %{$fg_bold[cyan]%}%c %{$fg_bold[blue]%}$(wesley_git_prompt_info)%{$reset_color%} '
+PROMPT='%{$fg_bold[red]%}➜ %{$fg_bold[cyan]%}%c$(wesley_ssh_host) %{$fg_bold[blue]%}$(wesley_git_prompt_info)%{$reset_color%} '
 
 PROMPT+='$(git_prompt_status)%{$reset_color%}'
 
