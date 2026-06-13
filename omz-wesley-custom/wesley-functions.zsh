@@ -28,3 +28,12 @@ function monitor_disk() {
         sleep "$interval"
     done
 }
+
+gfetch() {
+  local branch="$1"
+  git fetch origin "$branch" --depth=1 && git checkout -b "$branch" FETCH_HEAD
+}
+
+dusort() {
+  du -hs "$@" | sort -h
+}
