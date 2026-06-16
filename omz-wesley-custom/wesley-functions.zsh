@@ -37,3 +37,109 @@ gfetch() {
 dusort() {
   du -hs "$@" | sort -h
 }
+
+
+# temporary stuff because crazy SNow env.
+###
+# Local utils for glide instance
+# 1. find and shutdown all local Glide instances.
+# 2. list all installation
+###
+glide_util() {
+  case "$1" in
+    shutdown)
+      ps -ef | grep java | grep "target/install" | awk '{for(i=1;i<=NF;i++) if($i ~ /target\/install\/[^ ]+/) print $i}' | \
+      while read -r install_path; do
+        clean_path=$(echo "$install_path" | sed 's/^-D[^=]*=//')
+        dir=$(echo "$clean_path" | grep -o '.*target/install/[^/]*')
+        shutdown_script="$dir/shutdown.sh"
+        if [ -x "$shutdown_script" ]; then
+          echo "Shutting down: $shutdown_script"
+          "$shutdown_script"
+        else
+          echo "Shutdown script not found or not executable: $shutdown_script"
+        fi
+      done
+      ;;
+    list)
+      dirs=()
+      for d in /Users/wesley.ren/stuff/s-now/git/*/*-test/target/install; do
+        [ -d "$d" ] && dirs+=("$d")
+      done
+
+      echo "Install directories:"
+      for d in "${dirs[@]}"; do
+        echo "$d"
+      done
+      echo
+
+      for d in "${dirs[@]}"; do
+        for subdir in "$d"/*; do
+          if [ -d "$subdir" ]; then
+            ls -ld "$subdir" | awk '{print $6, $7, $8, $9}' | sed "s|$d/||"
+          fi
+        done
+      done
+      ;;
+    delete)
+      dirs=()
+      for d in /Users/wesley.ren/stuff/s-now/git/*/*-test/target/install; do
+        [ -d "$d" ] && dirs+=("$d")
+      done
+
+      if [ ${#dirs[@]} -eq 0 ]; then
+        echo "No install directories found."
+        return 1
+      fi
+
+      echo "Available install directories:"
+      echo "[0] Delete ALL listed directories"
+      idx=1
+      for d in "${dirs[@]}"; do
+        echo "[$idx] $d"
+        idx=$((idx + 1))
+      done
+
+      printf "Select a directory number to delete (blank to cancel): "
+      IFS= read -r choice
+      if [ -z "$choice" ]; then
+        echo "Deletion cancelled."
+        return 0
+      fi
+
+      if ! [[ "$choice" =~ ^[0-9]+$ ]] || [ "$choice" -gt ${#dirs[@]} ]; then
+        echo "Invalid selection."
+        return 1
+      fi
+
+      if [ "$choice" -eq 0 ]; then
+        echo "Directories to delete:"
+        printf '%s\n' "${dirs[@]}"
+        printf "Type 'delete all' to confirm removing ALL directories above (anything else cancels): "
+        IFS= read -r confirm_all
+        if [ "$confirm_all" = "delete all" ]; then
+          for target_dir in "${dirs[@]}"; do
+            rm -rf "$target_dir"
+            echo "Deleted: $target_dir"
+          done
+        else
+          echo "Deletion cancelled."
+        fi
+        return 0
+      fi
+
+      target_dir="${dirs[$((choice - 1))]}"
+      echo "Contents under $target_dir:"
+      find "$target_dir" -mindepth 1 -maxdepth 1 -type d -print
+
+      printf "Type 'delete' to confirm removing '%s' (anything else cancels): " "$target_dir"
+      IFS= read -r confirm
+      if [ "$confirm" = "delete" ]; then
+        rm -rf "$target_dir"
+        echo "Deleted: $target_dir"
+      else
+        echo "Deletion cancelled."
+      fi
+      ;;
+  esac
+}
