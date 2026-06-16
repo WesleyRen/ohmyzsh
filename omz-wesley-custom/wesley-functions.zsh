@@ -143,3 +143,48 @@ glide_util() {
       ;;
   esac
 }
+
+size_loop() {
+    local target_path="$1"
+    local interval="${2:-60}"
+
+    if [[ -z "$target_path" ]]; then
+        echo "usage: size_loop <file_or_directory> [interval_seconds]" >&2
+        return 2
+    fi
+
+    local start_time
+    start_time=$(date +%s)
+
+    local i=0
+    local size=""
+
+    echo "target_path: $target_path"
+
+    while true; do
+        ((i++))
+
+        if [[ ! -f "$target_path" && ! -d "$target_path" ]]; then
+            echo "[$target_path] doesn't exist!" >&2
+            return 1
+        fi
+
+        local new_size
+        new_size=$(du -hs "$target_path" | cut -f1)
+
+        if [[ "$size" == "$new_size" ]]; then
+            echo "[$target_path] size is stable"
+            return 0
+        fi
+
+        local now elapsed
+        now=$(date +%s)
+        elapsed=$((now - start_time))
+
+        printf "size %s, iteration %03d, time elapsed: %d minutes, %d seconds\n" \
+            "$new_size" "$i" "$((elapsed / 60))" "$((elapsed % 60))"
+
+        size="$new_size"
+        sleep "$interval"
+    done
+}
