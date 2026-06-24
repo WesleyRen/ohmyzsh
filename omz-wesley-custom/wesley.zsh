@@ -9,6 +9,8 @@ fi
 # Keep old Intel/Homebrew and MySQL paths if they exist.
 [ -d /usr/local/bin ] && export PATH="/usr/local/bin:$PATH"
 [ -d /usr/local/mysql/bin ] && export PATH="/usr/local/mysql/bin:$PATH"
+# mysql client from keg-only mariadb@10.6 (not linked into /opt/homebrew/bin).
+[ -d /opt/homebrew/opt/mariadb@10.6/bin ] && export PATH="/opt/homebrew/opt/mariadb@10.6/bin:$PATH"
 
 # Personal bin/home convenience path from older config.
 export PATH="$HOME:$PATH"
