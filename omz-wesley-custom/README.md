@@ -56,6 +56,7 @@ Repository contents:
 install-customized.sh
 
 wesley-zprofile
+wesley.zsh
 wesley-aliases.zsh
 wesley-functions.zsh
 
@@ -69,6 +70,7 @@ Installed files:
 ```text
 ~/.zprofile
 
+~/.oh-my-zsh/custom/wesley.zsh
 ~/.oh-my-zsh/custom/wesley-aliases.zsh
 ~/.oh-my-zsh/custom/wesley-functions.zsh
 

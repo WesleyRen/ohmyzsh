@@ -78,10 +78,12 @@ function wesley_git_prompt_info() {
 
   symbols="$(wesley_git_status_symbols)"
 
+  # Branch ref in orange ($fg[red] on this palette), like the default
+  # robbyrussell theme; the rest of the git info stays blue.
   if [[ -n "$symbols" ]]; then
-    echo "git:(${ref} ${symbols})"
+    echo "git:(%{$fg[red]%}${ref}%{$fg_bold[blue]%} ${symbols})"
   else
-    echo "git:(${ref})"
+    echo "git:(%{$fg[red]%}${ref}%{$fg_bold[blue]%})"
   fi
 }
 

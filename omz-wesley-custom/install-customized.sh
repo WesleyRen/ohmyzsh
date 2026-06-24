@@ -33,6 +33,11 @@ if [[ -f "wesley-functions.zsh" ]]; then
     cp wesley-functions.zsh "$CUSTOM_DIR/"
 fi
 
+# Install environment setup (PATH, nvm, conda, Java, vi mode)
+if [[ -f "wesley.zsh" ]]; then
+    cp wesley.zsh "$CUSTOM_DIR/"
+fi
+
 # Install iTerm2 Shell Integration if missing
 if [[ ! -f "$HOME/.iterm2_shell_integration.zsh" ]]; then
     echo "Installing iTerm2 Shell Integration..."
@@ -56,6 +61,10 @@ if grep -q '^ZSH_THEME=' "$HOME/.zshrc"; then
 else
     echo 'ZSH_THEME="wesley-robbyrussell"' >> "$HOME/.zshrc"
 fi
+
+# Source environment setup exactly once (PATH, nvm, conda, Java, vi mode)
+grep -q 'source ~/.oh-my-zsh/custom/wesley.zsh' "$HOME/.zshrc" || \
+    echo 'source ~/.oh-my-zsh/custom/wesley.zsh' >> "$HOME/.zshrc"
 
 # Source aliases exactly once
 grep -q 'source ~/.oh-my-zsh/custom/wesley-aliases.zsh' "$HOME/.zshrc" || \
@@ -84,6 +93,7 @@ fi
 echo
 echo "Installed:"
 echo "  Theme"
+echo "  Environment (PATH, nvm, conda, Java, vi mode)"
 echo "  Aliases"
 echo "  Functions"
 [[ -f "wesley-zprofile" ]] && echo "  .zprofile"
